@@ -38,6 +38,7 @@ public class CategoriesFragment extends ListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // initialize Volley queue
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
         String url = "https://resto.mprog.nl/categories";
@@ -47,14 +48,15 @@ public class CategoriesFragment extends ListFragment {
             @Override
             public void onResponse(String response) {
                 try {
+                    // get categories from JSON
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("categories");
-                    Log.d("CREATION", "onResponse: " + jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        Log.d("CREATION", "onResponse: " + jsonArray.getString(i));
                         String itemname = jsonArray.getString(i);
                         itemlist.add(itemname);
                     }
+
+                    // initialize adapter
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, itemlist);
                     CategoriesFragment.this.setListAdapter(adapter);
                 } catch (JSONException e) {
@@ -83,10 +85,13 @@ public class CategoriesFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
+        // get category at position
         String category = (String) l.getItemAtPosition(position);
 
+        // open new menufragment
         MenuFragment menuFragment = new MenuFragment();
 
+        // give category to fragment
         Bundle args = new Bundle();
         args.putString("category", category);
         menuFragment.setArguments(args);

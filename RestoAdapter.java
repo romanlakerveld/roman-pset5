@@ -21,11 +21,15 @@ public class RestoAdapter extends ResourceCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+        //get name and amount from cursor
         String name = cursor.getString(cursor.getColumnIndex("name"));
-        Log.d("CREATION", "bindView: " + name);
         int amount = cursor.getInt(cursor.getColumnIndex("amount"));
+
+        // initialize views
         TextView itemName = view.findViewById(R.id.itemName);
         TextView amountName = view.findViewById(R.id.itemAmount);
+
+        // set text values
         itemName.setText(name);
         amountName.setText(String.valueOf(amount));
     }

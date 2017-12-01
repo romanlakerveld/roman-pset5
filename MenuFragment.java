@@ -39,29 +39,37 @@ public class MenuFragment extends ListFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // initialize Hashmap for prices
         priceMap = new HashMap<>();
 
+        // get chosen category
         Bundle arguments = this.getArguments();
         String category = arguments.getString("category");
 
+        // initialize queue for Volley requests
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
+        // url for Volly request
         String url = "https://resto.mprog.nl/menu?category=" + category;
+
+        // list to store items in
         final List<String> itemlist = new ArrayList<String>();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
+                    // get menu items from JSON
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
-                    Log.d("CREATION", "onResponse: " + jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         String itemname = jsonArray.getJSONObject(i).getString("name");
                         itemlist.add(itemname);
+                        // fill priceMap
                         priceMap.put(itemname, jsonArray.getJSONObject(i).getDouble("price"));
 
                     }
+                    // initialize adapter
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, itemlist);
                     MenuFragment.this.setListAdapter(adapter);
                 } catch (JSONException e) {
@@ -89,8 +97,9 @@ public class MenuFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+
+        // call addItem in database for added item
         String item = (String) l.getItemAtPosition(position);
-        Log.d("CREATION", "onListItemClick: " + item);
         RestoDatabase db = RestoDatabase.getInstance(getActivity());
         db.addItem(item, priceMap.get(item));
 
